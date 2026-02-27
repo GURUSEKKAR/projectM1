@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CI/CD Security Pipeline Flow Chart</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <h1>CI/CD Security Pipeline Flow</h1>
+        <p>
+          This interactive diagram shows an end-to-end GitHub Actions pipeline
+          with build, security scans, deployment, and notifications.
+        </p>
+      </header>
+
+      <section class="flow-chart">
+        <!-- Step 1 -->
+        <article class="step-card">
+          <h2>Step 1: CODE COMMIT</h2>
+          <ul>
+            <li>Developer pushes code to <code>main</code> branch</li>
+          </ul>
+        </article>
+        <div class="arrow">▼</div>
+
+        <!-- Step 2 -->
+        <article class="step-card">
+          <h2>Step 2: TRIGGER</h2>
+          <ul>
+            <li>GitHub webhook triggers Actions workflow</li>
+          </ul>
+        </article>
+        <div class="arrow">▼</div>
+
+        <!-- Step 3 -->
+        <article class="step-card">
+          <h2>Step 3: BUILD</h2>
+          <ul>
+            <li>Checkout code</li>
+            <li><code>docker build -t myapp:latest .</code></li>
+            <li>Time: ~2–3 minutes</li>
+          </ul>
+        </article>
+        <div class="arrow">▼</div>
+
+        <!-- Step 4 -->
+        <article class="step-card">
+          <h2>Step 4: SECURITY SCAN #1 – Trivy</h2>
+          <ul>
+            <li>
+              <code>trivy image --severity HIGH,CRITICAL myapp:latest</code>
+            </li>
+            <li>Decision point: CRITICAL found?</li>
+          </ul>
+          <div class="decision">
+            <div class="decision-branch danger">
+              <span class="label">YES</span>
+              <span class="action">✖ Stop pipeline (exit 1)</span>
+            </div>
+            <div class="decision-branch success">
+              <span class="label">NO</span>
+              <span class="action">✔ Continue</span>
+            </div>
+          </div>
+          <ul>
+            <li>Time: ~1–2 minutes</li>
+          </ul>
+        </article>
+        <div class="arrow">▼</div>
+
+        <!-- Step 5 -->
+        <article class="step-card">
+          <h2>Step 5: SECURITY SCAN #2 – OWASP Dependency-Check</h2>
+          <ul>
+            <li><code>dependency-check --scan ./</code></li>
+            <li>Generate JSON + HTML reports</li>
+            <li>Upload as artifact</li>
+            <li>Time: ~2–3 minutes</li>
+          </ul>
+        </article>
+        <div class="arrow">▼</div>
+
+        <!-- Step 6 -->
+        <article class="step-card">
+          <h2>Step 6: SECURITY SCAN #3 – SonarQube</h2>
+          <ul>
+            <li><code>sonar-scanner</code></li>
+            <li>Push results to SonarCloud</li>
+            <li>Quality Gate check (optional blocking)</li>
+            <li>Time: ~1–2 minutes</li>
+          </ul>
+        </article>
+        <div class="arrow">▼</div>
+
+        <!-- Step 7 -->
+        <article class="step-card">
+          <h2>Step 7: PUBLISH</h2>
+          <ul>
+            <li>
+              <code>docker tag myapp:latest username/myapp:latest</code>
+            </li>
+            <li><code>docker push username/myapp:latest</code></li>
+            <li>Time: ~1–2 minutes</li>
+          </ul>
+        </article>
+        <div class="arrow">▼</div>
+
+        <!-- Step 8 -->
+        <article class="step-card">
+          <h2>Step 8: DEPLOY TO EC2</h2>
+          <ul>
+            <li>SSH to EC2</li>
+            <li><code>docker pull username/myapp:latest</code></li>
+            <li>Stop old container (if exists)</li>
+            <li>
+              <code>docker run -d -p 80:3009 myapp:latest</code>
+            </li>
+            <li>Time: ~1–2 minutes</li>
+          </ul>
+        </article>
+        <div class="arrow">▼</div>
+
+        <!-- Step 9 -->
+        <article class="step-card">
+          <h2>Step 9: SECURITY SCAN #4 – OWASP ZAP</h2>
+          <ul>
+            <li><code>zap-baseline.py -t http://&lt;ec2-ip&gt;</code></li>
+            <li>Attack live application</li>
+            <li>Generate HTML report</li>
+            <li>Upload as artifact</li>
+            <li>Time: ~3–5 minutes</li>
+          </ul>
+        </article>
+        <div class="arrow">▼</div>
+
+        <!-- Step 10 -->
+        <article class="step-card">
+          <h2>Step 10: UNIFIED REPORTING</h2>
+          <ul>
+            <li>Aggregate all JSON reports</li>
+            <li>Generate single HTML dashboard</li>
+            <li>Upload as artifact</li>
+            <li>Time: ~30 seconds</li>
+          </ul>
+        </article>
+        <div class="arrow">▼</div>
+
+        <!-- Step 11 -->
+        <article class="step-card">
+          <h2>Step 11: NOTIFICATION</h2>
+          <ul>
+            <li>
+              GitHub Actions shows:
+              <span class="pill pill-success">✔ Success</span>
+              or
+              <span class="pill pill-danger">✖ Failed</span>
+            </li>
+            <li>Developer gets email (if configured)</li>
+            <li>Total pipeline time: ~15–20 minutes</li>
+          </ul>
+        </article>
+      </section>
+
+      <footer class="page-footer">
+        <p>
+          Built with <span aria-hidden="true">❤️</span> using Node.js &amp;
+          Express.
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
+

@@ -1,0 +1,22 @@
+{
+  "name": "ci-security-pipeline-flowchart",
+  "version": "1.0.0",
+  "description": "Node.js application that displays a CI/CD security pipeline flow chart.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "flowchart",
+    "cicd",
+    "security"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
