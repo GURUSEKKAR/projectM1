@@ -9,5 +9,6 @@ RUN npm install
 COPY . .
 
 EXPOSE 5001
+#port 
 
 CMD ["node","server.js"]
